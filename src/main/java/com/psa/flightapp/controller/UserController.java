@@ -38,8 +38,7 @@ public class UserController {
 							  @RequestParam("password") String password,
 							  RedirectAttributes redirectAttributes,
 							  HttpSession httpSession) {
-		// Your user authentication logic goes here
-		// Assuming you have a User entity with a field called "role"
+
 		User user = userRepo.findByEmail(email);
 		if (user != null && user.getPassword().equals(password)) {
 			String role = user.getRole();
