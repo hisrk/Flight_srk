@@ -95,7 +95,7 @@ public class FlightController {
 			return "login/login";
 		}
 
-		System.out.println("Admin user logged in, attempting update with ID: " + id);
+
 
 		Optional<Reservation> reservationOptional = reservationRepository.findById(id);
 		if (reservationOptional.isPresent()) {
@@ -104,7 +104,7 @@ public class FlightController {
 			reservation2.setNumberOfBags(reservation1.getNumberOfBags());
 			reservationRepository.save(reservation2);
 
-			System.out.println("Reservation updated successfully");
+
 
 
 			List<Reservation> reservations = reservationRepository.findAll();
@@ -131,7 +131,7 @@ public class FlightController {
 			model.addAttribute("reservationDetailsList", reservationDetailsDTOList);
 			return "login/Reservations";
 		} else {
-			System.out.println("Reservation not found for ID: " + id);
+
 			return "login/login";
 		}
 	}
