@@ -90,9 +90,9 @@ public class FlightController {
 
 		User user = (User) loggedInUser;
 		if (!"admin".equals(user.getRole())) {
-			System.out.println("Non-admin user attempting to update");
+
 			httpSession.invalidate();
-			return "login/login"; // Redirect to an error page indicating permission denied
+			return "login/login";
 		}
 
 		System.out.println("Admin user logged in, attempting update with ID: " + id);
@@ -106,11 +106,10 @@ public class FlightController {
 
 			System.out.println("Reservation updated successfully");
 
-			// Populate reservation details for display
+
 			List<Reservation> reservations = reservationRepository.findAll();
 			List<ReservationDetailsDTO> reservationDetailsDTOList = new ArrayList<>();
 
-			// Mapping reservations to DTOs
 			for (Reservation reservation : reservations) {
 				ReservationDetailsDTO reservationDetailsDTO = new ReservationDetailsDTO();
 				reservationDetailsDTO.setId(reservation.getId());
@@ -128,12 +127,12 @@ public class FlightController {
 				reservationDetailsDTOList.add(reservationDetailsDTO);
 			}
 
-			// Add reservation details to model
+
 			model.addAttribute("reservationDetailsList", reservationDetailsDTOList);
 			return "login/Reservations";
 		} else {
 			System.out.println("Reservation not found for ID: " + id);
-			return "login/login"; // Redirect to an error page indicating reservation not found
+			return "login/login";
 		}
 	}
 
