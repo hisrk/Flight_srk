@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 public class FlightController {
-	
+
 	@Autowired
 	private FlightRepository flightRepo;
 	@Autowired
@@ -36,9 +36,9 @@ public class FlightController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@PostMapping("/findFlights")
-	public String findFlights(@RequestParam("from") String from,@RequestParam("to") String to, @RequestParam("departureDate")  String dateOfDeparture, ModelMap modelMap) {
+	public String findFlights(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam("departureDate") String dateOfDeparture, ModelMap modelMap) {
 		List<Flight> flights = flightRepo.findFlights(from, to, dateOfDeparture);
 
 		System.out.println(flights);
@@ -52,7 +52,7 @@ public class FlightController {
 		flightRepo.save(flight);
 
 
-		    List<Flight> flights=flightRepo.findAll();
+		List<Flight> flights = flightRepo.findAll();
 
 
 		model.addAttribute("flights", flights);
@@ -64,35 +64,38 @@ public class FlightController {
 
 	@GetMapping("/delete")
 
-	public String deleteFlight(@RequestParam("flightId") long id,Model model){
+	public String deleteFlight(@RequestParam("flightId") long id, Model model) {
 
-		               flightRepo.deleteById(id);
+		flightRepo.deleteById(id);
 
 
-		List<Flight> flights=flightRepo.findAll();
+		List<Flight> flights = flightRepo.findAll();
 
 
 		model.addAttribute("flights", flights);
 
-					   return "login/flightDetails";
-
+		return "login/flightDetails";
 
 
 	}
 
 	@PostMapping("/update")
 	public String updateCheckInAndNumberOfBags(@RequestParam("id") long id, Reservation reservation1, Model model, HttpSession httpSession) {
-
 		Object loggedInUser = httpSession.getAttribute("loggedInUser");
 		if (loggedInUser == null || !(loggedInUser instanceof User)) {
+			System.out.println("User not logged in");
+			httpSession.invalidate();
 			return "login/login";
 		}
 
 		User user = (User) loggedInUser;
 		if (!"admin".equals(user.getRole())) {
-			return "login/login";
+			System.out.println("Non-admin user attempting to update");
+			httpSession.invalidate();
+			return "login/login"; // Redirect to an error page indicating permission denied
 		}
 
+		System.out.println("Admin user logged in, attempting update with ID: " + id);
 
 		Optional<Reservation> reservationOptional = reservationRepository.findById(id);
 		if (reservationOptional.isPresent()) {
@@ -101,14 +104,15 @@ public class FlightController {
 			reservation2.setNumberOfBags(reservation1.getNumberOfBags());
 			reservationRepository.save(reservation2);
 
+			System.out.println("Reservation updated successfully");
 
+			// Populate reservation details for display
 			List<Reservation> reservations = reservationRepository.findAll();
 			List<ReservationDetailsDTO> reservationDetailsDTOList = new ArrayList<>();
 
-
+			// Mapping reservations to DTOs
 			for (Reservation reservation : reservations) {
 				ReservationDetailsDTO reservationDetailsDTO = new ReservationDetailsDTO();
-
 				reservationDetailsDTO.setId(reservation.getId());
 				reservationDetailsDTO.setFlightNumber(reservation.getFlight().getFlightNumber());
 				reservationDetailsDTO.setOperatingAirlines(reservation.getFlight().getOperatingAirlines());
@@ -124,15 +128,21 @@ public class FlightController {
 				reservationDetailsDTOList.add(reservationDetailsDTO);
 			}
 
-
+			// Add reservation details to model
 			model.addAttribute("reservationDetailsList", reservationDetailsDTOList);
 			return "login/Reservations";
 		} else {
-			return "login/login";
+			System.out.println("Reservation not found for ID: " + id);
+			return "login/login"; // Redirect to an error page indicating reservation not found
 		}
 	}
 
 }
+
+
+
+
+
 
 
 

@@ -45,11 +45,11 @@ public class UserController {
 			String role = user.getRole();
 			if ("admin".equals(role)) {
 
-				httpSession.setAttribute("loggedInUser", user.getEmail());
+				httpSession.setAttribute("loggedInUser", user);
 
 				return "login/adminHomePage";
 			} else if ("user".equals(role)) {
-				httpSession.setAttribute("loggedInUser", user.getEmail());
+				httpSession.setAttribute("loggedInUser", user);
 
 				return "searchFlights";
 			} else {
