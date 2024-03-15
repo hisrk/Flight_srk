@@ -14,5 +14,6 @@
         Password: <input type="password" name="password"/><br>
         <input type="submit" value="Login"/>
     </form>
+    <td>${msg}</td>
 </body>
 </html>

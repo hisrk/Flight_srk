@@ -2,6 +2,7 @@ package com.psa.flightapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,7 @@ public class UserController {
 	@PostMapping("/verifyLogin")
 	public String verifyLogin(@RequestParam("email") String email,
 							  @RequestParam("password") String password,
-							  RedirectAttributes redirectAttributes,
+							  Model model,
 							  HttpSession httpSession) {
 
 		User user = userRepo.findByEmail(email);
@@ -52,12 +53,12 @@ public class UserController {
 
 				return "searchFlights";
 			} else {
-				redirectAttributes.addFlashAttribute("error", "Invalid role");
+				model.addAttribute("msg","invalid Username Or password");
 				return "login/login";
 			}
 		} else {
-			redirectAttributes.addFlashAttribute("error", "Invalid username/password");
-			return "redirect:/login";
+			model.addAttribute("msg","invalid Username Or password");
+			return "login/login";
 		}
 	}
 
